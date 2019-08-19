@@ -16,7 +16,7 @@
 	require_once(MILIB_LIB_PATH."/log.php");	
 
 	// Rutas
-	defined('SRC_PATH') ? null : define('SRC_PATH', ROOT_PATH.DS.'ccc'.DS.'instalador_mapa_abonados'.DS.'src');
+	defined('SRC_PATH') ? null : define('SRC_PATH', ROOT_PATH.DS.'ccc'.DS.'mapa_abonados'.DS.'src');
 	defined('CONFIG_PATH') ? null : define('CONFIG_PATH', SRC_PATH.DS.'cfg');
 	defined('LIB_PATH') ? null : define('LIB_PATH', SRC_PATH.DS.'lib');
 

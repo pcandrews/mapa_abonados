@@ -12,15 +12,3 @@ enviar puntos nuevos
 
 Tareas Futuras:
 1. Sacar sql de funciones.
-
-asdadasdasas
-<o-date-picker
-    selectedDate={da
-    as
-    da
-    da
-    dasd}
-    onSelect={}
-    show={false}
-    onToggle={}
-></o-date-picker>
