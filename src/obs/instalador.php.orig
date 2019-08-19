@@ -1,0 +1,232 @@
+<?php
+
+	header('Content-Type: text/html; charset=UTF-8');
+	ini_set("display_errors", "On");
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL | E_STRICT);
+	header("Content-Type: text/html; charset=UTF-8");
+	date_default_timezone_set('America/Argentina/Tucuman');
+	setlocale(LC_ALL, 'es-AR');
+
+	// Dependecias
+	require_once("cfg/config_instalador.php"); // Esta tiene que ir completa
+	require_once(CONFIG_INSTALL_PATH."/config_mysql_crear_usuario.php");
+
+	require_once("funciones.php");
+
+	
+	// Conectar base de datos
+	$conex_root = new BaseDeDatos(DB_SERVER, DB_ROOT, DB_PASSROOT);
+
+	// Crear usuario
+	//$sentencia = "CREATE USER IF NOT EXISTS '" . DB_USER . "'@'" . DB_SERVER . "' IDENTIFIED BY '" . DB_PASSUSER . "';";
+	//$sentencia = MYSQL_CREAR_USUARIO;
+	//$conex_root->query($sentencia);
+	$conex_root->query(MYSQL_CREAR_USUARIO);
+
+	// Garantizar privilegios usuario
+	//$sentencia = "REVOKE ALL PRIVILEGES ON *.* FROM '" . DB_USER . "'@'" . DB_SERVER ."';";
+	//$conex_root->query($sentencia);
+	$conex_root->query(MYSQL_REV_PRIV);
+
+
+	/*$sentencia = "GRANT ALL PRIVILEGES ON "  . DB_NAME . ".* TO '" . DB_USER . "'@'" . DB_SERVER . "' 
+				REQUIRE NONE WITH GRANT OPTION 
+				MAX_QUERIES_PER_HOUR 0 
+				MAX_CONNECTIONS_PER_HOUR 0 
+				MAX_UPDATES_PER_HOUR 0 
+				MAX_USER_CONNECTIONS 0;";
+	$conex_root->query($sentencia);*/
+	$conex_root->query(MYSQL_GRANT_PRIV);
+
+	// Crear base de datos
+	$sentencia = "	CREATE DATABASE IF NOT EXISTS " . DB_NAME . "
+					DEFAULT CHARACTER SET " . DB_CHARSET . "
+					DEFAULT COLLATE " . DB_COLLATION . ";";
+	//$sentencia = "CREATE DATABASE IF NOT EXISTS ccc DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_spanish_ci;";
+	$conex_root->query($sentencia);
+
+	// Privilegios usuario.   
+	$sentencia = "GRANT ALL PRIVILEGES ON " . DB_NAME . ".* TO ". DB_USER ."@" . DB_SERVER . ";";
+	$conex_root->query($sentencia);
+
+	// Refrescar todos los privilegios. siempre que haya un cambio de privilegios.
+	$sentencia = "FLUSH PRIVILEGES;";
+	$conex_root->query($sentencia);
+
+	// Terminar sesion root
+	$conex_root->cerrar_conexion();
+
+
+	/**********************/
+	
+	
+	// Abrir conexion usuario ccc_admin
+	$conex_ccc_admin = new BaseDeDatos(DB_SERVER, DB_USER, DB_PASSUSER);
+
+	// Crear tablas
+
+	$sentencia = "	CREATE TABLE IF NOT EXISTS ccc.archivos_uhfapp (
+					id_a_uhfapp INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+				
+					nombre_a_uhfapp VARCHAR(255),
+					ruta_a_uhfapp VARCHAR(255),
+					extension_a_uhfapp VARCHAR(5),
+					ultima_modificacion_a_uhfapp INT(11) UNSIGNED,
+					hash_a_uhfapp CHAR(64),
+					contenido_a_uhfapp MEDIUMBLOB,
+				
+					PRIMARY KEY(id_a_uhfapp)
+				) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+	$sentencia = "	CREATE TABLE IF NOT EXISTS ccc.crudo_uhfapp (
+					id_c_uhfapp INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+					id_a_uhfapp INT(11) UNSIGNED NOT NULL,
+				
+					nombre_c_uhfapp VARCHAR(255),
+					mac_c_uhfapp VARCHAR(255),
+				
+					n_abonado_c_uhfapp INT(11) UNSIGNED,
+				
+					lat_c_uhfapp FLOAT(10,6) NULL,
+					lng_c_uhfapp FLOAT(10,6) NULL,
+					gps_dcml_c_uhfapp POINT,
+					gps_sexa_c_uhfapp VARCHAR(255),
+				
+					obs_c_uhfapp TEXT,
+					
+					fecha_c_uhfapp DATETIME,
+				
+					PRIMARY KEY(id_c_uhfapp),
+					FOREIGN KEY (id_a_uhfapp) REFERENCES ccc.archivos_uhfapp (id_a_uhfapp) 
+						ON DELETE CASCADE 
+						ON UPDATE CASCADE
+				) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.personas (
+		id_persona INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+		
+		dni_persona INT(11) UNSIGNED NULL UNIQUE,
+		cuil_persona INT(11) UNSIGNED NULL UNIQUE,
+		nombres_persona VARCHAR(255),
+		apellidos_persona VARCHAR(255),
+	
+		PRIMARY KEY(id_persona)
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+	
+	
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.abonados (
+		numero_abonado INT(11) UNSIGNED NOT NULL UNIQUE,
+		id_persona INT(11) UNSIGNED NOT NULL,
+		
+		estado_abonado INT(11),
+		servicio_abonado VARCHAR(255),
+	
+		PRIMARY KEY(numero_abonado),
+		FOREIGN KEY (id_persona) REFERENCES ccc.personas (id_persona) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.domicilios (
+		id_domicilio INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+		id_persona INT(11) UNSIGNED NOT NULL,
+	
+		calle_domicilio VARCHAR(255),
+		numero_domicilio INT(11) UNSIGNED,
+		dpto_domicilio VARCHAR(255),
+		piso_domicilio INT(11) UNSIGNED,
+		barrio_domicilio VARCHAR(255),
+		municipio_domicilio VARCHAR(255),
+		zona_domicilio VARCHAR (255),	
+		observacion_domicilio TEXT, 
+		
+		PRIMARY KEY(id_domicilio),
+		FOREIGN KEY (id_persona) REFERENCES ccc.personas (id_persona) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.moviles (
+		id_movil INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+	
+		nombre_movil VARCHAR (255) UNIQUE,	
+	
+		PRIMARY KEY(id_movil)
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+	
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.coordenadas_gps (
+		id_c_gps INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+		id_domicilio INT(11) UNSIGNED NOT NULL,
+	
+		lat_c_gps FLOAT(10,6) NULL,
+		lng_c_gps FLOAT(10,6) NULL,
+		
+		PRIMARY KEY(id_c_gps),
+		FOREIGN KEY (id_domicilio) REFERENCES ccc.domicilios (id_domicilio) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.instalaciones_servicios (
+		id_i_servicios INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+		id_domicilio INT(11) UNSIGNED NOT NULL,
+		id_movil INT(11) UNSIGNED NOT NULL,
+		
+		observacion_i_servicios TEXT, 
+		fecha_i_servicios INT(11) UNSIGNED,
+		
+		PRIMARY KEY(id_i_servicios),
+		FOREIGN KEY (id_domicilio) REFERENCES ccc.domicilios (id_domicilio) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE,
+		FOREIGN KEY (id_movil) REFERENCES ccc.moviles (id_movil) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+	
+
+	$sentencia = "CREATE TABLE IF NOT EXISTS ccc.fotos_domicilios (
+		id_f_domicilio INT(11) UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+		id_a_uhfapp INT(11) UNSIGNED NOT NULL,
+		numero_abonado INT(11) UNSIGNED NOT NULL,
+		id_domicilio INT(11) UNSIGNED,
+		
+		PRIMARY KEY(id_f_domicilio), 
+		FOREIGN KEY (id_a_uhfapp) REFERENCES ccc.archivos_uhfapp (id_a_uhfapp) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE,
+		FOREIGN KEY (numero_abonado) REFERENCES ccc.abonados (numero_abonado) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE,
+		FOREIGN KEY (id_domicilio) REFERENCES ccc.domicilios (id_domicilio) 
+			ON DELETE CASCADE 
+			ON UPDATE CASCADE
+	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_spanish_ci;";
+	$conex_ccc_admin->query($sentencia);
+
+	// Llenar informacion
+
+	indexar_datos(DIR_UHFAPP);
+    tiempo_de_ejecucion();
+
+
+	// Terminar sesion ccc_admin
+	$conex_ccc_admin->cerrar_conexion();
+
+
+	echo "Instalacion Exitosa."
+
+?>

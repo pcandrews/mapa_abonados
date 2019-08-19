@@ -1,0 +1,26 @@
+
+mostrar puntos en el mapa
+instalar en el servidor
+
+poner y configurar config_.php en la plantilla
+haacer un redme para tmp 
+decir que tiene q ir ser de apache
+
+cron job diario:
+agregar nuevos puntos
+enviar puntos nuevos
+
+Tareas Futuras:
+1. Sacar sql de funciones.
+
+asdadasdasas
+<o-date-picker
+    selectedDate={da
+    as
+    da
+    da
+    dasd}
+    onSelect={}
+    show={false}
+    onToggle={}
+></o-date-picker>

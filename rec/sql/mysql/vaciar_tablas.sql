@@ -1,0 +1,31 @@
+SET FOREIGN_KEY_CHECKS=0;
+
+TRUNCATE `abonados`;
+TRUNCATE `celulares`;
+TRUNCATE `coordenadas_gps`;
+#TRUNCATE `csv_app_relevamiento`;
+TRUNCATE `direcciones`;
+TRUNCATE `empleados`;
+TRUNCATE `empresas`;
+TRUNCATE `facturas`;
+#TRUNCATE `fotos_instalaciones`;
+TRUNCATE `instalaciones_servicios`;
+TRUNCATE `instaladores`;
+#TRUNCATE `kmls_instalaciones`;
+TRUNCATE `linea_celulares`;
+TRUNCATE `medios_contacto`;
+TRUNCATE `orden_trabajo`;
+TRUNCATE `personas`;
+TRUNCATE `rel_abonados_direcciones`;
+TRUNCATE `rel_abonados_facturas`;
+TRUNCATE `rel_abonados_instalaciones_servicios`;
+TRUNCATE `rel_coordenadas_direcciones`;
+TRUNCATE `rel_empleados_instaladores`;
+TRUNCATE `rel_instalaciones_instaladores`;
+TRUNCATE `rel_instalaciones_servicios_celulares`;
+TRUNCATE `rel_personas_abonados`;
+TRUNCATE `rel_personas_direcciones`;
+TRUNCATE `rel_personas_empleados`;
+#TRUNCATE `_temp_csv_app_relevamiento`;
+
+SET FOREIGN_KEY_CHECKS=1;
