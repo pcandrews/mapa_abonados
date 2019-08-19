@@ -21,7 +21,7 @@
 	defined('LIB_PATH') ? null : define('LIB_PATH', SRC_PATH.DS.'lib');
 
 	require_once(LIB_PATH."/funciones.php");
-	require_once(CONFIG_PATH."/config_instalador_mysql.php");
+	require_once(CONFIG_PATH."/config_mysql.php");
 
 	// Directorios REDEFINIR CON DIRECTORIO REAL
 	defined('DIR_UHFAPP') ? null : define('DIR_UHFAPP', '/home/pablo/Proyectos/ccc/uhfapp');

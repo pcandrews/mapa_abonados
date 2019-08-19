@@ -15,8 +15,6 @@ DB_PASSWORD=sanlorenzo
 
 ## Instalar
 
-Correr: instalador.php
-
 Lo único que se tiene realmente configurar son:
 MySQL:
     · nombre root.
@@ -32,7 +30,7 @@ Si estos 3 datos son correctos, la instalacion y la carga de datos deberia corre
     usuario: root
     contraseña: rockyrocky
 
-   Si los datos son diferentes, actualizar la constante DB_PASSROOT en config_instalador.php
+   Si los datos son diferentes, actualizar la constante DB_PASSROOT en mapa_abonados/src/cfg/config.php
 
 2. Path datos: especificar.
 
