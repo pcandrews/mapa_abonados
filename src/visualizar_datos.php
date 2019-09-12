@@ -11,7 +11,5 @@
 	// Esta ruta tiene que ser estatica
 	require_once("cfg/config.php");
 	
-	indexar_datos(DIR_UHFAPP);
-    tiempo_de_ejecucion();
 
 ?>
