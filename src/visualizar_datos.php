@@ -17,8 +17,8 @@
 
    $pts = $bd->fetch_all(MYSQL_PTS_GPS_MAS_RECIENTES);
 
-   echo json_encode($pts[0]['lat_c_gps']);
-   echo json_encode($pts[0]['lng_c_gps']);
+   //echo json_encode($pts[0]['lat_c_gps']);
+   //echo json_encode($pts[0]['lng_c_gps']);
 
    //echo json_encode($pts);
 
@@ -72,16 +72,9 @@
          pts[0]=[-26.8281,-65.2154];
          pts[1]=[-27.261997,-65.548851];*/
 
-
-         //var pts2 = <?php echo json_encode($pts); ?>;
-
-         //alert(pts2[0]['lat_c_gps']);
-
          var pts = <?php echo json_encode($pts); ?>;
 
-
-
-         for(i=0; i<9455; i++) {
+         for(i=0; i<pts.length; i++) {
 
             // Creating Marker Options
             var markerOptions = {
